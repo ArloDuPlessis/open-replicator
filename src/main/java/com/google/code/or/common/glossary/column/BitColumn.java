@@ -17,6 +17,8 @@
 package com.google.code.or.common.glossary.column;
 
 import com.google.code.or.common.glossary.Column;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  *
@@ -25,9 +27,9 @@ import com.google.code.or.common.glossary.Column;
 public final class BitColumn implements Column {
 	//
 	private static final long serialVersionUID = 4193150509864408687L;
-
+    private static final Logger logger = LoggerFactory.getLogger(BitColumn.class);
 	//
-	private static final int BIT_MASKS[] = {1 << 0, 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7};
+	private static final int BIT_MASKS[] = {1 , 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7};
 
 	//
 	private final int length;
@@ -79,6 +81,19 @@ public final class BitColumn implements Column {
 	public boolean get(int index) {
 		final int byteIndex = (index >> 3);
 		final int bitIndex = (index - (byteIndex << 3));
+
+        String valueString = "";
+        for (int i=0; i < this.value.length; i++) {
+            valueString = valueString + ", " + this.value[i];
+        }
+
+        logger.info(
+            "BitColumn get(index) variables:\n" +
+            "byteIndex = " + byteIndex + "\n" +
+            "bitIndex = " + bitIndex + "\n" +
+            "BitColumn.value = " + valueString +
+            "BIT_MASKS[] = {1 , 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7};"
+        );
 		return (this.value[byteIndex] & BIT_MASKS[bitIndex]) != 0;
 	}
 
