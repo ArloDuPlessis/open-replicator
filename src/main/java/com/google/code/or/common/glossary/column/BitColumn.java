@@ -82,19 +82,22 @@ public final class BitColumn implements Column {
 		final int byteIndex = (index >> 3);
 		final int bitIndex = (index - (byteIndex << 3));
 
-        String valueString = "";
-        for (int i=0; i < this.value.length; i++) {
-            valueString = valueString + ", " + this.value[i];
+        try {
+            return (this.value[byteIndex] & BIT_MASKS[bitIndex]) != 0;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            String valueString = "";
+            for (int i=0; i < this.value.length; i++) {
+                valueString = valueString + ", " + this.value[i];
+            }
+            logger.error(
+                "BitColumn get(index) variables:\n" +
+                "byteIndex = " + byteIndex + "\n" +
+                "bitIndex = " + bitIndex + "\n" +
+                "BitColumn.value = " + valueString + "\n" +
+                "BIT_MASKS[].length = " + BIT_MASKS.length
+            );
+            throw e;
         }
-
-        logger.info(
-            "BitColumn get(index) variables:\n" +
-            "byteIndex = " + byteIndex + "\n" +
-            "bitIndex = " + bitIndex + "\n" +
-            "BitColumn.value = " + valueString +
-            "BIT_MASKS[] = {1 , 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7};"
-        );
-		return (this.value[byteIndex] & BIT_MASKS[bitIndex]) != 0;
 	}
 
 	public void set(int index) {
